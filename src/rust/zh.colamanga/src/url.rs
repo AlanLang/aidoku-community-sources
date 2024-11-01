@@ -13,6 +13,9 @@ use strum_macros::{Display, IntoStaticStr};
 #[derive(Display)]
 #[strum(prefix = "https://www.colamanga.com")]
 pub enum Url<'a> {
+	#[strum(to_string = "")]
+	Domain,
+
 	#[strum(to_string = "/")]
 	Home,
 
@@ -62,16 +65,37 @@ impl Display for Search {
 
 impl<'a> Url<'a> {
 	pub fn get_html(self) -> Result<Node> {
-		Request::get(self.to_string()).html()
+		self.get().html()
 	}
 
 	pub fn get_json(self) -> Result<ValueRef> {
-		Request::get(self.to_string()).json()
+		self.get().json()
+	}
+}
+
+impl Url<'_> {
+	pub fn get(&self) -> Request {
+		Request::get(self.to_string()).default_headers()
 	}
 }
 
 impl<'a> From<(Vec<Filter>, i32)> for Url<'a> {
 	fn from((filters, page): (Vec<Filter>, i32)) -> Self {
 		Url::Home
+	}
+}
+
+pub trait DefaultRequest {
+	fn default_headers(self) -> Self;
+}
+
+impl DefaultRequest for Request {
+	fn default_headers(self) -> Self {
+		let referer = Url::Domain.to_string();
+		self.header("Referer", &referer).header(
+			"User-Agent",
+			"Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) \
+			 AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+		)
 	}
 }
