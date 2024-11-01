@@ -17,3 +17,5 @@ lto = true
 
 [dependencies]
 aidoku = { git = "https://github.com/Aidoku/aidoku-rs", features = ["helpers"] }
+strum_macros = "0.26.2"
+hex = { version = "0.4.3", default-features = false, features = ["alloc"] }

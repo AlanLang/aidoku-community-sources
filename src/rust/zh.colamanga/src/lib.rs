@@ -1,16 +1,24 @@
 #![no_std]
+extern crate alloc;
+mod parser;
+mod url;
+
 use aidoku::{
 	error::Result,
 	prelude::*,
 	std::{String, Vec},
 	Chapter, Filter, Listing, Manga, MangaPageResult, Page,
 };
+use parser::MangaListResponse;
+use url::Url;
 
-const BASE_URL: &str = "https://asuracomic.net";
+const BASE_URL: &str = "https://www.colamanga.com/";
 
 #[get_manga_list]
-fn get_manga_list(_: Vec<Filter>, _: i32) -> Result<MangaPageResult> {
-	todo!()
+fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
+	let manga_list_url = Url::from((filters, page));
+	let filters_page = manga_list_url.get_html()?;
+	return filters_page.get_page_result();
 }
 
 #[get_manga_listing]
