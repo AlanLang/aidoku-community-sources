@@ -13,8 +13,13 @@ pub trait MangaListResponse {
 impl MangaListResponse for Node {
 	fn get_page_result(self) -> Result<MangaPageResult> {
 		let manga = self.select("li.fed-list-item").array().get_manga_list()?;
+		let page = self.select("#fed-now").text().read().parse::<usize>();
 
-		let has_more = false;
+		let has_more = match page {
+			// can't fine the total page in web, just take a fixed amount of data
+			Ok(index) => index < 26,
+			Err(_) => false,
+		};
 
 		Ok(MangaPageResult { manga, has_more })
 	}
@@ -65,7 +70,7 @@ fn get_mange(item: ValueRef) -> Result<Manga> {
 	let id = node.select("a.fed-list-pics").attr("href").read();
 	let url = id.clone();
 
-	aidoku::prelude::println!("{} {}", title, url);
+	// aidoku::prelude::println!("{} {}", title, url);
 
 	Ok(Manga {
 		id,
