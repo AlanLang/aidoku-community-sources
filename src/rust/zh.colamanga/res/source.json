@@ -1,0 +1,16 @@
+{
+	"info": {
+		"id": "zh.colamanga",
+		"lang": "zh",
+		"name": "COLAMANGA",
+		"version": 1,
+		"url": "https://www.colamanga.com/",
+		"nsfw": 1,
+		"languages": [
+			{
+				"code": "zh",
+				"default": true
+			}
+		]
+	}
+}
