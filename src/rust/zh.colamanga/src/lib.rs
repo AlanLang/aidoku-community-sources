@@ -13,6 +13,7 @@ use aidoku::{
 use alloc::string::ToString;
 use parser::MangaListResponse;
 use url::Url;
+const BASE_URL: &str = "https://www.colamanga.com/";
 
 #[get_manga_list]
 fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
@@ -43,6 +44,9 @@ fn get_page_list(_: String, _: String) -> Result<Vec<Page>> {
 
 #[modify_image_request]
 fn modify_image_request(request: Request) {
-	let url = Url::Domain.to_string();
-	request.header("Referrer", &url);
+	request.header("Referer", BASE_URL).header(
+		"User-Agent",
+		"Mozilla/5.0 (iPhone; CPU iPhone OS 17_6 like Mac OS X) \
+			 AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1",
+	);
 }
