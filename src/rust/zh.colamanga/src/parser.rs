@@ -49,6 +49,27 @@ trait MangaArr {
 }
 impl MangaArr for ArrayRef {
 	fn get_manga_list(self) -> Result<Vec<Manga>> {
-		todo!()
+		let mut manga = Vec::<Manga>::new();
+		for item in self {
+			manga.push(get_mange(item)?);
+		}
+		Ok(manga)
 	}
+}
+
+fn get_mange(item: ValueRef) -> Result<Manga> {
+	let node = item.as_node()?;
+
+	let cover = node.select("a.fed-list-pics").attr("data-original").read();
+	let title = node.select("a.fed-list-title").text().read();
+	let id = node.select("a.fed-list-pics").attr("href").read();
+	let url = id.clone();
+
+	Ok(Manga {
+		id,
+		cover,
+		title,
+		url,
+		..Default::default()
+	})
 }
