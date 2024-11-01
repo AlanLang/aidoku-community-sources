@@ -6,13 +6,13 @@ mod url;
 use aidoku::{
 	error::Result,
 	prelude::*,
+	std::net::Request,
 	std::{String, Vec},
 	Chapter, Filter, Listing, Manga, MangaPageResult, Page,
 };
+use alloc::string::ToString;
 use parser::MangaListResponse;
 use url::Url;
-
-const BASE_URL: &str = "https://www.colamanga.com/";
 
 #[get_manga_list]
 fn get_manga_list(filters: Vec<Filter>, page: i32) -> Result<MangaPageResult> {
@@ -39,4 +39,10 @@ fn get_chapter_list(_: String) -> Result<Vec<Chapter>> {
 #[get_page_list]
 fn get_page_list(_: String, _: String) -> Result<Vec<Page>> {
 	todo!()
+}
+
+#[modify_image_request]
+fn modify_image_request(request: Request) {
+	let url = Url::Domain.to_string();
+	request.header("Referrer", &url);
 }

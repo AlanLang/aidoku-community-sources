@@ -65,6 +65,8 @@ fn get_mange(item: ValueRef) -> Result<Manga> {
 	let id = node.select("a.fed-list-pics").attr("href").read();
 	let url = id.clone();
 
+	aidoku::prelude::println!("{} {}", title, url);
+
 	Ok(Manga {
 		id,
 		cover,

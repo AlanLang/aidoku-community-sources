@@ -13,7 +13,7 @@ use strum_macros::{Display, IntoStaticStr};
 #[derive(Display)]
 #[strum(prefix = "https://www.colamanga.com")]
 pub enum Url<'a> {
-	#[strum(to_string = "")]
+	#[strum(to_string = "/")]
 	Domain,
 
 	#[strum(to_string = "/")]
