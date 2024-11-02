@@ -2,16 +2,16 @@ use aidoku::{
 	error::Result,
 	helpers::uri::QueryParameters,
 	prelude::format,
-	std::{html::Node, net::Request, String, ValueRef, Vec},
+	std::{html::Node, net::Request, Vec},
 	Filter, FilterType,
 };
-use alloc::{borrow::ToOwned as _, string::ToString};
-use core::fmt::{Display, Formatter, Result as FmtResult};
-use strum_macros::{Display, FromRepr, IntoStaticStr};
+use alloc::string::ToString;
+use strum_macros::Display;
 
-use crate::filter::{get_kind_code, get_sort_code, get_status_code, Status};
-
-const STATUS: [Status; 3] = [Status::All, Status::Ongoing, Status::Completed];
+use crate::{
+	filter::{get_kind_code, get_sort_code, get_status_code},
+	search::Search,
+};
 
 #[expect(private_interfaces)]
 #[derive(Display)]
@@ -20,13 +20,14 @@ pub enum Url<'a> {
 	#[strum(to_string = "/")]
 	Domain,
 
-	#[strum(to_string = "/")]
-	Home,
 	// status={status}&mainCategoryId={kind}&orderBy={sort_by}&page={page}
 	#[strum(to_string = "/show?{query}")]
 	Filters { query: QueryParameters },
 
-	#[strum(to_string = "/comic/{id}")]
+	#[strum(to_string = "/search?{search}")]
+	Search { search: Search },
+
+	#[strum(to_string = "/{id}")]
 	Manga { id: &'a str },
 }
 
@@ -69,6 +70,14 @@ impl<'a> From<(Vec<Filter>, i32)> for Url<'a> {
 						let sort = get_sort_code(index);
 						query.push_encoded("orderBy", Some(&sort))
 					}
+				}
+				FilterType::Title => {
+					let keyword = match filter.value.as_string() {
+						Ok(str_ref) => str_ref.read(),
+						Err(_) => continue,
+					};
+					let search = Search::new(page, keyword);
+					return Url::Search { search };
 				}
 				_ => continue,
 			}

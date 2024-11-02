@@ -1,5 +1,5 @@
 use alloc::string::{String, ToString};
-use strum_macros::{Display, FromRepr, IntoStaticStr};
+use strum_macros::{Display, FromRepr};
 
 #[derive(Default, Display, FromRepr)]
 pub enum Status {

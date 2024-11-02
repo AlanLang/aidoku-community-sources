@@ -1,12 +1,19 @@
+use core::fmt::{Display, Formatter, Result};
+
+use aidoku::helpers::uri::QueryParameters;
+use alloc::{
+	borrow::ToOwned,
+	string::{String, ToString},
+};
+
 #[derive(Default)]
-struct Search {
+pub struct Search {
 	page: i32,
 	keyword: String,
-	by: SearchType,
 }
 
 impl Search {
-	fn new<S: AsRef<str>>(page: i32, keyword: S) -> Self {
+	pub fn new<S: AsRef<str>>(page: i32, keyword: S) -> Self {
 		Self {
 			page,
 			keyword: keyword.as_ref().to_owned(),
@@ -16,24 +23,11 @@ impl Search {
 }
 
 impl Display for Search {
-	fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-		todo!()
+	fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+		let mut query = QueryParameters::new();
+		query.push_encoded("type", Some("1"));
+		query.push("searchString", Some(&self.keyword));
+		query.push("page", Some(&self.page.to_string()));
+		write!(f, "{query}")
 	}
-}
-
-#[expect(dead_code)]
-#[derive(Default, IntoStaticStr, Clone, Copy)]
-enum SearchType {
-	#[default]
-	#[strum(to_string = "")]
-	All,
-
-	#[strum(to_string = "name")]
-	Title,
-
-	#[strum(to_string = "author")]
-	Author,
-
-	#[strum(to_string = "local")]
-	Translator,
 }
